@@ -6,6 +6,97 @@
 // Fonctions
 
 // Fonctions usuelles
+int min(int, int);
+
+void remplirTab(double**, int);
+
+void afficheTab2D(double ** , int );
+
+// Générateurs de matrices
+void bord(double**, int);
+
+void dingDong(double**, int);
+
+void franc(double**, int);
+
+void hilbert1(double**, int);
+
+void hilbert2(double**, int);
+
+void kms(double**, int);
+
+void lehmer(double**, int);
+
+void lotkin(double**, int);
+
+void moler(double**, int);
+
+// Fonctions Gauss
+void remplirSys(double*, int);
+
+void afficheSys(double*, int);
+
+void echangeLigne(double**, int, int, int);
+
+void diviseLigne(double*, int, double);
+
+void soustractionLigne(double**, int, int,int, int);
+
+void gauss(double**, int, double*);
+
+
+// Main
+
+int main()
+{
+  int taille = 0; // Taille de la matrice
+  printf("Taille de la matrice : ");
+  scanf("%d", &taille);
+  int i; // Compteur
+
+  // Crée une matrice vide de taille taille
+  // i lignes j colonnes
+  double** tab = (double**) malloc(taille * sizeof(double*));
+  for(i = 0; i < taille; i++)
+  {
+    tab[i]  = (double*) malloc(taille * sizeof(double));
+  }
+
+  double* systeme = (double*) malloc(taille * sizeof(double));
+  double* resouSys = (double*) malloc(taille * sizeof(double));
+
+  hilbert2(tab, taille);
+
+  afficheTab2D(tab, taille);
+
+  // Remplir matrice
+  remplirTab(tab, taille);
+  remplirSys(systeme, taille);
+
+  // Affiche la matrice
+  afficheTab2D(tab, taille);
+  afficheSys(systeme, taille);
+
+
+  // Résolution par la méthode de Gauss
+  gauss(tab,taille, systeme); //Echelonnage
+
+  // soustractionLigne(tab,taille,0,1,1);
+  // echangeLigne(tab,taille,0,1);
+
+  afficheTab2D(tab,taille);
+  afficheSys(systeme, taille);
+  free(tab);
+  free(systeme);
+  free(resouSys);
+  return 0;
+}
+
+
+// Fonctions
+
+// Fonctions usuelles
+
 
 int min(int a, int b)
 {
@@ -318,52 +409,4 @@ void gauss(double** tab, int taille,double* sys)
     }
     j--;
   }
-}
-
-
-// Main
-
-int main()
-{
-  int taille = 0; // Taille de la matrice
-  printf("Taille de la matrice : ");
-  scanf("%d", &taille);
-  int i; // Compteur
-
-  // Crée une matrice vide de taille taille
-  // i lignes j colonnes
-  double** tab = (double**) malloc(taille * sizeof(double*));
-  for(i = 0; i < taille; i++)
-  {
-    tab[i]  = (double*) malloc(taille * sizeof(double));
-  }
-
-  double* systeme = (double*) malloc(taille * sizeof(double));
-  double* resouSys = (double*) malloc(taille * sizeof(double));
-
-  hilbert2(tab, taille);
-
-  afficheTab2D(tab, taille);
-
-  // Remplir matrice
-  remplirTab(tab, taille);
-  remplirSys(systeme, taille);
-
-  // Affiche la matrice
-  afficheTab2D(tab, taille);
-  afficheSys(systeme, taille);
-
-
-  // Résolution par la méthode de Gauss
-  gauss(tab,taille, systeme); //Echelonnage
-
-  // soustractionLigne(tab,taille,0,1,1);
-  // echangeLigne(tab,taille,0,1);
-
-  afficheTab2D(tab,taille);
-  afficheSys(systeme, taille);
-  free(tab);
-  free(systeme);
-  free(resouSys);
-  return 0;
 }

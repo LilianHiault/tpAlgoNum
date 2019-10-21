@@ -248,7 +248,7 @@ void remplirSys(double* tab,int taille)
   int i;
   double valeur = 0;
   // printf("i%d",i);
-  for(i = 0; i <taille; i++)
+  for(i = 0; i < taille; i++)
   {
     //printf("j%d",j);
     printf("inconnue %d =  : ", i + 1);
@@ -260,7 +260,7 @@ void remplirSys(double* tab,int taille)
 void afficheSys(double* tab, int taille)
 {
   int j;
-  printf("\nSysteme\n");
+  printf("\nSystème\n");
   for(j = 0; j < taille; j++)
   {
     printf("%lf ", tab[j]);
@@ -270,7 +270,7 @@ void afficheSys(double* tab, int taille)
 
 void echangeLigne(double** tab, int taille, int nouv, int anc)
 {
-  //    double* liEx = (double*) malloc(taille * sizeof(double));
+  //double* liEx = (double*) malloc(taille * sizeof(double));
   //liEx = tab[nouv];
   //tab[nouv] = tab[anc];
   //tab[anc] = liEx;
@@ -278,7 +278,7 @@ void echangeLigne(double** tab, int taille, int nouv, int anc)
 
   double echange = 0;
   int i;
-  for(i=0; i<taille; i++)
+  for(i = 0; i < taille; i++)
   {
     echange = tab[nouv][i];
     tab[nouv][i] = tab[anc][i];
@@ -289,9 +289,9 @@ void echangeLigne(double** tab, int taille, int nouv, int anc)
 void diviseLigne(double* tab, int taille, double divi)
 {
   int i = 0;
-  for(i=0;i<taille;i++)
+  for(i = 0; i < taille; i++)
   {
-    tab[i]=tab[i]/divi;
+    tab[i]=tab[i] / divi;
   }
 }
 
@@ -300,32 +300,30 @@ void soustractionLigne(double** tab, int taille, int pivot,int sous, int col)
   int i;
   double divi = tab[sous][col] / tab[pivot][col];
   // printf("divi %lf", divi);
-  for(i=col;i<taille;i++)
+  for(i = col; i < taille; i++)
   {
-    tab[sous][i] = tab[sous][i] - ( divi * tab[pivot][i] );
+    tab[sous][i] = tab[sous][i] - (divi * tab[pivot][i]);
   }
 }
 
 void gauss(double** tab, int taille,double* sys)
 {
-  int i, j,k, resteI;
+  int i, j, k, resteI;
   i = 0;
   j = 0;
   k = 0;
   double pass = 0;
   int coord[2] = {0, 0};
 
-
-  //Trigonalisation///////
-
+  // Trigonalisation
 
   while(j < taille) // Changer de colonne
   {
     i = k;
     resteI = 0;
-    // printf("k = %d et i = %d\n",k,i);
+    // printf("k = %d et i = %d\n", k, i);
     // afficheTab2D(tab,taille);
-    while(tab[i][j] == 0  && i < taille-1) // Changer de ligne dans une colonne
+    while(tab[i][j] == 0  && i < taille - 1) // Changer de ligne dans une colonne
     {
       i++;
     }
@@ -334,12 +332,12 @@ void gauss(double** tab, int taille,double* sys)
 
       sys[i]=sys[i]/tab[i][j];
       diviseLigne(tab[i],taille,tab[i][j]);
-      resteI = i+1;
+      resteI = i + 1;
 
-      while(resteI<taille) // diviser chaque ligne
+      while(resteI < taille) // diviser chaque ligne
       {
         sys[resteI] =sys[resteI]- (tab[resteI][j]/tab[i][j]) * sys[i];
-        soustractionLigne(tab,taille,i,resteI,j);
+        soustractionLigne(tab, taille, i, resteI, j);
         resteI++;
       }
       //printf("\nici\n");
@@ -351,19 +349,18 @@ void gauss(double** tab, int taille,double* sys)
         pass = sys[k];
         sys[k] = sys[i];
         sys[i] = pass ;
-        echangeLigne(tab,taille,i,k);
+        echangeLigne(tab, taille, i, k);
       }
       k++;
     }
-
     else
     {
-      //	  printf("Pas de pivot colonne %d\n", j+1);
+      //printf("Pas de pivot colonne %d\n", j+1);
     }
     j++;
   }
 
-  //Diagonalisation/////////////////
+  // Diagonalisation
 
   i = taille-1;
   j = taille-1;
@@ -373,34 +370,33 @@ void gauss(double** tab, int taille,double* sys)
   {
     i = k;
     resteI = 0;
-    // printf("k = %d et i = %d\n",k,i);
+    //printf("k = %d et i = %d\n",k,i);
     while(tab[i][j] == 0  && i > 1) // Changer de ligne dans une colonne
     {
       i--;
     }
     if(tab[i][j] != 0)
     {
+      sys[i] = sys[i] / tab[i][j];
+      diviseLigne(tab[i], taille, tab[i][j]);
+      resteI = i - 1;
 
-      sys[i]=sys[i]/tab[i][j];
-      diviseLigne(tab[i],taille,tab[i][j]);
-      resteI = i-1;
-
-      while(resteI> 0) // diviser chaque ligne
+      while(resteI > 0) // diviser chaque ligne
       {
-        sys[resteI] =sys[resteI]- (tab[resteI][j]/tab[i][j]) * sys[i];
-        soustractionLigne(tab,taille,i,resteI,j);
+        sys[resteI] = sys[resteI] - (tab[resteI][j] / tab[i][j]) * sys[i];
+        soustractionLigne(tab, taille, i, resteI, j);
         resteI++;
       }
       //printf("\nici\n");
-      //	  printf("Pivot = %lf colonne %d\n",tab[i][j], j+1);
+      //printf("Pivot = %lf colonne %d\n",tab[i][j], j + 1);
 
       if (i != k) // met le pivot en haut mais pas trop pour echelonner
       {
-        //  printf("\nici\n");
+        //printf("\nici\n");
         pass = sys[k];
         sys[k] = sys[i];
         sys[i] = pass ;
-        echangeLigne(tab,taille,i,k);
+        echangeLigne(tab, taille, i, k);
       }
       k--;
     }

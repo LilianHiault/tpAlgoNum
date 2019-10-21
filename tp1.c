@@ -215,54 +215,53 @@ void soustractionLigne(double** tab, int taille, int pivot,int sous, int col)
   }
 }
 
-void gauss(double** tab, int taille)
+void gauss(double** tab, int taille,double* sys)
 {
   int i, j,k, resteI;
   i = 0;
   j = 0;
   k = 0;
+  double pass = 0;
   int coord[2] = {0, 0};
+
+
+  //Trigonalisation///////
+
+
   while(j < taille) // Changer de colonne
   {
-    coord[0] = 0;
-    coord[1] = 0;
     i = k;
     resteI = 0;
     // printf("k = %d et i = %d\n",k,i);
-
-
     // afficheTab2D(tab,taille);
     while(tab[i][j] == 0  && i < taille-1) // Changer de ligne dans une colonne
     {
       i++;
     }
-
-
     if(tab[i][j] != 0)
     {
 
-
+      sys[i]=sys[i]/tab[i][j];
       diviseLigne(tab[i],taille,tab[i][j]);
       resteI = i+1;
 
       while(resteI<taille) // diviser chaque ligne
       {
-
+        sys[resteI] =sys[resteI]- (tab[resteI][j]/tab[i][j]) * sys[i];
         soustractionLigne(tab,taille,i,resteI,j);
         resteI++;
       }
       //printf("\nici\n");
-
       //	  printf("Pivot = %lf colonne %d\n",tab[i][j], j+1);
 
       if (i != k) // met le pivot en haut mais pas trop pour echelonner
       {
         //  printf("\nici\n");
+        pass = sys[k];
+        sys[k] = sys[i];
+        sys[i] = pass ;
         echangeLigne(tab,taille,i,k);
       }
-
-
-
       k++;
     }
 
@@ -272,6 +271,53 @@ void gauss(double** tab, int taille)
     }
     j++;
   }
+
+  //Diagonalisation/////////////////
+
+  i = taille-1;
+  j = taille-1;
+  k = taille-1;
+
+  while(j > 0) // Changer de colonne
+  {
+    i = k;
+    resteI = 0;
+    // printf("k = %d et i = %d\n",k,i);
+    while(tab[i][j] == 0  && i > 1) // Changer de ligne dans une colonne
+    {
+      i--;
+    }
+    if(tab[i][j] != 0)
+    {
+
+      sys[i]=sys[i]/tab[i][j];
+      diviseLigne(tab[i],taille,tab[i][j]);
+      resteI = i-1;
+
+      while(resteI> 0) // diviser chaque ligne
+      {
+        sys[resteI] =sys[resteI]- (tab[resteI][j]/tab[i][j]) * sys[i];
+        soustractionLigne(tab,taille,i,resteI,j);
+        resteI++;
+      }
+      //printf("\nici\n");
+      //	  printf("Pivot = %lf colonne %d\n",tab[i][j], j+1);
+
+      if (i != k) // met le pivot en haut mais pas trop pour echelonner
+      {
+        //  printf("\nici\n");
+        pass = sys[k];
+        sys[k] = sys[i];
+        sys[i] = pass ;
+        echangeLigne(tab,taille,i,k);
+      }
+      k--;
+    }
+    else
+    {
+    }
+    j--;
+  }
 }
 
 
@@ -279,40 +325,45 @@ void gauss(double** tab, int taille)
 
 int main()
 {
-  // Taille de la matrice
-  int taille = 0;
+  int taille = 0; // Taille de la matrice
   printf("Taille de la matrice : ");
   scanf("%d", &taille);
-  int i; // Compteurs
+  int i; // Compteur
 
   // Crée une matrice vide de taille taille
-  // i ligne j colonne
+  // i lignes j colonnes
   double** tab = (double**) malloc(taille * sizeof(double*));
   for(i = 0; i < taille; i++)
   {
     tab[i]  = (double*) malloc(taille * sizeof(double));
   }
 
-  //   double* systeme = (double*) malloc(taille * sizeof(double));
-  // afficheTab2D(tab, taille);
+  double* systeme = (double*) malloc(taille * sizeof(double));
+  double* resouSys = (double*) malloc(taille * sizeof(double));
 
   hilbert2(tab, taille);
 
+  afficheTab2D(tab, taille);
+
   // Remplir matrice
-  //remplirTab(tab, taille);
-  //remplirSys(systeme, taille);
+  remplirTab(tab, taille);
+  remplirSys(systeme, taille);
 
   // Affiche la matrice
   afficheTab2D(tab, taille);
+  afficheSys(systeme, taille);
+
 
   // Résolution par la méthode de Gauss
-  gauss(tab,taille); //Echelonnage
+  gauss(tab,taille, systeme); //Echelonnage
 
   // soustractionLigne(tab,taille,0,1,1);
   // echangeLigne(tab,taille,0,1);
 
   afficheTab2D(tab,taille);
+  afficheSys(systeme, taille);
   free(tab);
-  //free(systeme);
+  free(systeme);
+  free(resouSys);
   return 0;
 }

@@ -231,14 +231,82 @@ void hilbert2(double** tab, int n)
   }
 }
 
-void kms(double** tab, int n);
+void kms(double** tab, int n, double p)
+// Crée une matrice kms
+{
+  int i, j; // i lignes et j colonnes
+  // n est la taille
+  for(i = 0; i < n; i++)
+  {
+    for(j = 0; j < n; j++)
+    {
+      tab[i][j] = pow(p,(abs(i-j)));
+    }
+  }
+}
 
-void lehmer(double** tab, int n);
+void lehmer(double** tab, int n)
+// Crée une matrice Lehmer
+{
+  int i, j; // i lignes et j colonnes
+  // n est la taille
+  for(i = 0; i < n; i++)
+  {
+    for(j = 0; j < n; j++)
+    {
+      if(i <= j)
+      {
+        tab[i][j] = (i + 1) / (j + 1);
+      }
+      else
+      {
+        tab[i][j] = (j + 1) / (i + 1);
+      }
+    }
+  }
+}
 
-void lotkin(double** tab, int n);
+void lotkin(double** tab, int n)
+// Crée une matrice Lotkin
+{
+  int i, j; // i lignes et j colonnes
+  // n est la taille
+  for(i = 0; i < n; i++)
+  {
+    for(j = 0; j < n; j++)
+    {
+      if(i == 0)
+      {
+        tab[0][j] = 1;
+      }
+      else
+      {
+        tab[i][j] = 1 / ((i + 1) + (j + 1) - 1);
+      }
+    }
+  }
+}
 
-void moler(double** tab, int n);
-
+void moler(double** tab, int n)
+// Crée une matrice Moler
+{
+  int i, j; // i lignes et j colonnes
+  // n est la taille
+  for(i = 0; i < n; i++)
+  {
+    for(j = 0; j < n; j++)
+    {
+      if(i == j)
+      {
+        tab[i][j] = i + 1;
+      }
+      else
+      {
+        tab[i][j] = min((i + 1), (j + 1)) - 2;
+      }
+    }
+  }
+}
 
 // Fonctions Gauss
 

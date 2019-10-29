@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 
 // Fonctions
@@ -317,15 +318,15 @@ void creuse (double** tab, int n)
 {
   // n est la taille de la matrice tab
   int i, j; // i lignes et j colonnes
-  int reste = n**2; // Nombre de cases restantes
-  int zero = ceil(0.7 * r); // Nombre de zéros à placer (au moins 70%)
-  int aleat = rand(1, r);
+  int reste = pow(n, 2); // Nombre de cases restantes
+  int zero = ceil(0.7 * reste); // Nombre de zéros à placer (au moins 70%)
+  int aleat = 1 + rand() % reste;
 
   for(i = 0; i < n; i ++)
   {
     for(j = 0; i < n; j++)
     {
-      aleat = rand(1, r);
+      aleat = 1 + rand() % reste;
       if(aleat <= zero)
       {
         tab[i][j] = 0;
@@ -334,7 +335,7 @@ void creuse (double** tab, int n)
       }
       else
       {
-        r--; // Il y a une case de moins à traiter
+        reste--; // Il y a une case de moins à traiter
       }
     }
   }

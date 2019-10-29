@@ -23,13 +23,15 @@ void hilbert1(double**, int);
 
 void hilbert2(double**, int);
 
-void kms(double**, int);
+void kms(double**, int, double);
 
 void lehmer(double**, int);
 
 void lotkin(double**, int);
 
 void moler(double**, int);
+
+void creuse(double**, int);
 
 // Fonctions Gauss
 void remplirSys(double*, int);
@@ -49,6 +51,8 @@ void gauss(double**, int, double*);
 
 int main()
 {
+  srand(time(NULL)); // Initialisation de valeurs aléatoires
+
   int taille = 0; // Taille de la matrice
   printf("Taille de la matrice : ");
   scanf("%d", &taille);
@@ -62,15 +66,15 @@ int main()
     tab[i]  = (double*) malloc(taille * sizeof(double));
   }
 
-  double* systeme = (double*) malloc(taille * sizeof(double));
-  double* resouSys = (double*) malloc(taille * sizeof(double));
+  /*double* systeme = (double*) malloc(taille * sizeof(double));
+  double* resouSys = (double*) malloc(taille * sizeof(double));*/
 
-  hilbert2(tab, taille);
+  creuse(tab, taille);
 
   afficheTab2D(tab, taille);
 
   // Remplir matrice
-  remplirTab(tab, taille);
+  /*remplirTab(tab, taille);
   remplirSys(systeme, taille);
 
   // Affiche la matrice
@@ -88,7 +92,7 @@ int main()
   afficheSys(systeme, taille);
   free(tab);
   free(systeme);
-  free(resouSys);
+  free(resouSys);*/
   return 0;
 }
 
@@ -308,6 +312,34 @@ void moler(double** tab, int n)
   }
 }
 
+void creuse (double** tab, int n)
+// Crée une matrice creuse aléatoire avec plus de 70% de valeurs nulles
+{
+  // n est la taille de la matrice tab
+  int i, j; // i lignes et j colonnes
+  int reste = n**2; // Nombre de cases restantes
+  int zero = ceil(0.7 * r); // Nombre de zéros à placer (au moins 70%)
+  int aleat = rand(1, r);
+
+  for(i = 0; i < n; i ++)
+  {
+    for(j = 0; i < n; j++)
+    {
+      aleat = rand(1, r);
+      if(aleat <= zero)
+      {
+        tab[i][j] = 0;
+        zero--; // Un zéro de moins à placer
+        reste--; // Il y a une case de moins à traiter
+      }
+      else
+      {
+        r--; // Il y a une case de moins à traiter
+      }
+    }
+  }
+}
+
 // Fonctions Gauss
 
 void remplirSys(double* tab,int taille)
@@ -381,7 +413,6 @@ void gauss(double** tab, int taille,double* sys)
   j = 0;
   k = 0;
   double pass = 0;
-  int coord[2] = {0, 0};
 
   // Trigonalisation
 

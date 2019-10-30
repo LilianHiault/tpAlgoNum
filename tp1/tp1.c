@@ -98,20 +98,37 @@ int main()
 
   // Résolution par la méthode de Gauss
   gauss(tab,taille, systeme); //Echelonnage
-  printf("\n Re-Renverse\n");
+  //printf("\n Re-Renverse\n");
   renverseTab2D(tab,taille);
   renverseSys(systeme,taille);
-  // soustractionLigne(tab,taille,0,1,1);
-  // echangeLigne(tab,taille,0,1);
-  printf("\nfinal");
-  afficheTab2D(tab,taille);
-  afficheSys(systeme, taille);
+
+  verif = verifSol(tab, systeme, taille);
+  printf("\n Verification = %d",verif);
+  if(verif==-1)
+  {
+    printf("\n Il n'y a pas de solution");
+  }
+  else
+  {
+    if(verif==0)
+    {
+      printf("\nLa solution est :");
+    }
+    else
+    {
+      printf("\n Il y a plusieurs solutions : ");
+    }
+    // soustractionLigne(tab,taille,0,1,1);
+    // echangeLigne(tab,taille,0,1);
+    printf("\nfinal");
+    afficheTab2D(tab,taille);
+    afficheSys(systeme, taille);
+  }
   free(tab);
   free(systeme);
   free(resouSys);
   return 0;
 }
-
 
 // Fonctions
 
@@ -430,16 +447,16 @@ void gauss(double** tab, int taille,double* sys)
   k = 0;
   double pass = 0;
 
-  printf("\n et ici");
+  //printf("\n et ici");
   // Trigonalisation
 
   while(j < taille) // Changer de colonne
   {
-    printf("\nEn Fait j = %d",j);
+    //printf("\nEn Fait j = %d",j);
     i = k;
     resteI = 0;
-    printf("\nk = %d et i = %d\n", k, i);
-    afficheTab2D(tab,taille);
+    //printf("\nk = %d et i = %d\n", k, i);
+    // afficheTab2D(tab,taille);
     while(tab[i][j] == 0  && i < taille - 1) // Changer de ligne dans une colonne
     {
       i++;
@@ -458,7 +475,7 @@ void gauss(double** tab, int taille,double* sys)
         resteI++;
       }
       // printf("\nici\n");
-      printf("Pivot = %lf colonne %d\n",tab[i][j], j+1);
+      //printf("Pivot = %lf colonne %d\n",tab[i][j], j+1);
 
       if (i != k) // met le pivot en haut mais pas trop pour echelonner
       {
@@ -472,13 +489,13 @@ void gauss(double** tab, int taille,double* sys)
     }
     else
     {
-      printf("Pas de pivot colonne %d\n", j+1);
+      //printf("Pas de pivot colonne %d\n", j+1);
     }
     j++;
-    printf("\n j = %d",j);
-    afficheSys(sys,taille);
+    //printf("\n j = %d",j);
+    // afficheSys(sys,taille);
   }
-  printf("\n Et là j = %d",j);
+  //printf("\n Et là j = %d",j);
 
 }
 
@@ -516,4 +533,41 @@ void renverseSys(double* sys, int taille)
     sys[i] = sys[taille-1-i];
     sys[taille-i-1] = swap;
   }
+}
+
+
+
+int verifSol(double** tab, double* sys,int taille)
+{
+  int i,j,verif,compte0;
+  verif = 0;   // 0 = normal/ 1  = exprssion par d'autres/ -1 Pas possible
+  i = 0;
+  while(verif >= 0 && i < taille)
+  {
+    compte0=0;
+    for(j=0; j<taille;j++)
+    {
+      if(tab[i][j]==0)
+      {
+        compte0++;
+      }
+    }
+    if(compte0==taille)
+    {
+      if(sys[i] == 0)
+      {
+        verif++;
+      }
+      else
+      {
+        verif=-1;
+      }
+    }
+    else if(compte0==0)
+    {
+      verif++;
+    }
+    i++;
+  }
+  return verif;
 }

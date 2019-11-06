@@ -51,6 +51,9 @@ void renverseTab2D(double** , int);
 
 void renverseSys(double*, int);
 
+int verifSol(double**, double*, int);
+
+
 // Main
 
 int main()
@@ -71,6 +74,8 @@ int main()
   {
     tab[i]  = (double*) malloc(taille * sizeof(double));
   }
+
+  int verif =0;
 
   double* systeme = (double*) malloc(taille * sizeof(double));
   double* resouSys = (double*) malloc(taille * sizeof(double));

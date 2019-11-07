@@ -2,4 +2,8 @@
 \#*#
 tp1/tp1
 tp2/tp2
+*.aux
+*.log
+*.out
+*.toc
 

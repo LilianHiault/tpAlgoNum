@@ -54,7 +54,7 @@ void renverseSys(double*, int);
 int verifSol(double**, double*, int);
 
 void cholesky(double**,double**, int, double*);
- 
+
 
 // Main
 
@@ -65,56 +65,54 @@ int main()
   int taille = 0; // Taille de la matrice
   printf("Taille de la matrice : ");
   scanf("%d", &taille);
-  int i; // Compteur
-
-  printf("Taill/2 = %d",taille/2);
 
   // Crée une matrice vide de taille taille
   // i lignes j colonnes
   double** tab = (double**) malloc(taille * sizeof(double*));
-  double** matR =(double**) malloc(taille * sizeof(double*)); 
+  double** matR =(double**) malloc(taille * sizeof(double*));
+  int i; // Compteur
   for(i = 0; i < taille; i++)
   {
     tab[i]  = (double*) malloc(taille * sizeof(double));
     matR[i]  = (double*) malloc(taille * sizeof(double));
   }
 
-  int verif =0;
+  /*int verif = 0;
 
   double* systeme = (double*) malloc(taille * sizeof(double));
-  double* resouSys = (double*) malloc(taille * sizeof(double));
+  double* resouSys = (double*) malloc(taille * sizeof(double));*/
 
-  // creuse(tab, taille);
+  creuse(tab, taille);
 
   afficheTab2D(tab, taille);
 
   // Remplir matrice
-  remplirTab(tab, taille);
-  //remplirSys(systeme, taille);
+  /*remplirTab(tab, taille);
+  remplirSys(systeme, taille);
   cholesky(tab,matR,taille,systeme);
-  //afficheSys(systeme, taille);
+  afficheSys(systeme, taille);
 
-  //afficheTab2D(tab, taille);
+  afficheTab2D(tab, taille);
 
-  // gauss(tab,taille, systeme);
-  //printf("\nRenverse\n");
-  //renverseTab2D(tab,taille);
-  //renverseSys(systeme,taille);
+  gauss(tab,taille, systeme);
+  printf("\nRenverse\n");
+  renverseTab2D(tab,taille);
+  renverseSys(systeme,taille);
 
   // Affiche la matrice
-  //afficheTab2D(tab, taille);
-  // afficheSys(systeme, taille);
+  afficheTab2D(tab, taille);
+  afficheSys(systeme, taille);
 
 
   // Résolution par la méthode de Gauss
-  //gauss(tab,taille, systeme); //Echelonnage
-  //printf("\n Re-Renverse\n");
-  //renverseTab2D(tab,taille);
-  //renverseSys(systeme,taille);
+  gauss(tab,taille, systeme); //Echelonnage
+  printf("\n Re-Renverse\n");
+  renverseTab2D(tab,taille);
+  renverseSys(systeme,taille);
 
-  //afficheSys(systeme, taille);
-  //verif = verifSol(tab, systeme, taille);
-  //printf("\n Verification = %d",verif);
+  afficheSys(systeme, taille);
+  verif = verifSol(tab, systeme, taille);
+  printf("\n Verification = %d",verif);
   if(verif==-1)
   {
     printf("\n Il n'y a pas de solution");
@@ -123,27 +121,27 @@ int main()
   {
     if(verif==0)
     {
-      //printf("\nLa solution est :");
+      printf("\nLa solution est :");
     }
     else
     {
-      //printf("\n Il y a plusieurs solutions : ");
+      printf("\n Il y a plusieurs solutions : ");
     }
-    // soustractionLigne(tab,taille,0,1,1);
-    // echangeLigne(tab,taille,0,1);
-    //printf("\nfinal");
-    //afficheTab2D(tab,taille);
-    //afficheSys(systeme, taille);
-  }
+    soustractionLigne(tab,taille,0,1,1);
+    echangeLigne(tab,taille,0,1);
+    printf("\nfinal");
+    afficheTab2D(tab,taille);
+    afficheSys(systeme, taille);
+  }*/
 
   for(i = 0; i< taille; i++){
     free(tab[i]);
     free(matR[i]);
   }
-  
+
   free(tab);
-  free(systeme);
-  free(resouSys);
+  // free(systeme);
+  // free(resouSys);
   return 0;
 }
 
@@ -365,15 +363,19 @@ void moler(double** tab, int n)
 void creuse (double** tab, int n)
 // Crée une matrice creuse aléatoire avec plus de 70% de valeurs nulles
 {
+  // printf("Fonction creuse :\n");
   // n est la taille de la matrice tab
   int i, j; // i lignes et j colonnes
   int reste = pow(n, 2); // Nombre de cases restantes
+  // printf("Reste : %d\n", reste);
   int zero = ceil(0.7 * reste); // Nombre de zéros à placer (au moins 70%)
-  int aleat = 1 + rand() % reste;
+  // printf("Zero : %d\n", zero);
+  int aleat = 1 + rand() % reste; // Nombre aléatoire
+  // printf("aleat : %d\n", aleat);
 
   for(i = 0; i < n; i ++)
   {
-    for(j = 0; i < n; j++)
+    for(j = 0; j < n; j++)
     {
       aleat = 1 + rand() % reste;
       if(aleat <= zero)
@@ -384,6 +386,7 @@ void creuse (double** tab, int n)
       }
       else
       {
+        tab[i][j] = random();
         reste--; // Il y a une case de moins à traiter
       }
     }
@@ -593,41 +596,39 @@ int verifSol(double** tab, double* sys,int taille)
 void cholesky(double** tab,double** matR, int taille, double* sys) {
   int somme = 0;
   matR[0][0] = sqrt(tab[0][0]);
-       for(int i =1; i<taille; i++){
-	 for(int j = 0; j<taille; j++){
-	   somme = 0;
-	   if(i==j){
-	     for(int k = 0; k<j; k++){
-	       somme = somme + (matR[j][k]) * (matR[j][k]);
-	     }
-	     matR[j][j] = sqrt(tab[j][j] - somme);
-	   }
-	   else if(j>i){
-	     matR[i][j] = 0;
-	   }
-	   
-	   else{
-	     for(int k = 0; k<j; k++){
-	       somme = somme + (matR[i][k]) * (matR[j][k]);
-	     }
-	     matR[i][j] = (1/matR[j][j]) * (tab[i][j] - somme);
-	   }
-	 }
-       }
-       printf("\n matrice R\n");
-       afficheTab2D(matR,taille);
+  for(int i =1; i<taille; i++){
+    for(int j = 0; j<taille; j++){
+      somme = 0;
+      if(i==j){
+        for(int k = 0; k<j; k++){
+          somme = somme + (matR[j][k]) * (matR[j][k]);
+        }
+        matR[j][j] = sqrt(tab[j][j] - somme);
+      }
+      else if(j>i){
+        matR[i][j] = 0;
+      }
 
-       ////////////////////////////////////
-       ///////////RESOLUTION///////////////
-       ////////////////////////////////////
+      else{
+        for(int k = 0; k<j; k++){
+          somme = somme + (matR[i][k]) * (matR[j][k]);
+        }
+        matR[i][j] = (1/matR[j][j]) * (tab[i][j] - somme);
+      }
+    }
+  }
+  printf("\n matrice R\n");
+  afficheTab2D(matR,taille);
 
-       for(i=0; i< taille; i++){
-	 somme = 0;
-	 for(j=0; j<i ;j++){
-	   somme = somme + matR[i][j] * sys[i]
-	     sys[i] = (sys[i]- somme) / matR[i][i];
-       
+  ////////////////////////////////////
+  ///////////RESOLUTION///////////////
+  ////////////////////////////////////
+
+  for(int i=0; i< taille; i++){
+    somme = 0;
+    for(int j=0; j<i ;j++){
+      somme = somme + matR[i][j] * sys[i];
+      sys[i] = (sys[i]- somme) / matR[i][i];
+    }
+  }
 }
-		    
-	   
-	       

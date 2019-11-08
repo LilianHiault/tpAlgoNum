@@ -34,26 +34,34 @@ void moler(double**, int);
 
 void creuse(double**, int);
 
-// Fonctions Gauss
+// Système
 void remplirSys(double*, int);
 
 void afficheSys(double*, int);
 
 void echangeLigne(double**, int, int, int);
 
+// Pour Gauss
+
 void diviseLigne(double*, int, double);
 
 void soustractionLigne(double**, int, int, int, int);
 
-void gauss(double**, int, double*);
+void gauss(double**, int, double*); // Expliqué dans le main
 
-void renverseTab2D(double** , int);
+void renverseTab2D(double** , int); // Expliqué dans le main
 
-void renverseSys(double*, int);
+void renverseSys(double*, int); // Expliqué dans le main
 
-int verifSol(double**, double*, int);
+int verifSol(double**, double*, int); // Expliqué dans le main
 
-void cholesky(double**,double**, int, double*);
+// Pour Cholesky
+
+void cholesky(double**,double**, int, double*); // Expliqué dans le main
+
+void transposeTri(double** , int); // Expliqué dans le main
+
+void resoudCho(double** ,int, double*,int); // Expliqué dans le main
 
 
 // Main
@@ -77,71 +85,56 @@ int main()
     matR[i]  = (double*) malloc(taille * sizeof(double));
   }
 
-  /*int verif = 0;
+  int verif = 0;
 
   double* systeme = (double*) malloc(taille * sizeof(double));
-  double* resouSys = (double*) malloc(taille * sizeof(double));*/
+  double* resouSys = (double*) malloc(taille * sizeof(double));
 
-  creuse(tab, taille);
+  // creuse(tab, taille);
 
   afficheTab2D(tab, taille);
 
   // Remplir matrice
-  /*remplirTab(tab, taille);
+  remplirTab(tab, taille);
   remplirSys(systeme, taille);
-  cholesky(tab,matR,taille,systeme);
-  afficheSys(systeme, taille);
+  // afficheSys(systeme, taille);
 
-  afficheTab2D(tab, taille);
+  // afficheTab2D(tab, taille);
 
-  gauss(tab,taille, systeme);
-  printf("\nRenverse\n");
-  renverseTab2D(tab,taille);
-  renverseSys(systeme,taille);
+  // gauss(tab,taille, systeme); // Triangulation avec le système
+  // printf("\nRenverse\n");
+  // renverseTab2D(tab,taille); // Pas transposée, pour inverser la position dans la ligne et dans la colonne
+  // renverseSys(systeme,taille); // Pareil pour le système
 
   // Affiche la matrice
-  afficheTab2D(tab, taille);
-  afficheSys(systeme, taille);
+  // afficheTab2D(tab, taille);
+  // afficheSys(systeme, taille);
 
 
   // Résolution par la méthode de Gauss
-  gauss(tab,taille, systeme); //Echelonnage
-  printf("\n Re-Renverse\n");
-  renverseTab2D(tab,taille);
-  renverseSys(systeme,taille);
+  // gauss(tab,taille, systeme); //Simplifie au maximum
+  // printf("\n Re-Renverse\n");
+  // renverseTab2D(tab,taille); // Remet dans le sens original
+  // renverseSys(systeme,taille); // Pareil
 
-  afficheSys(systeme, taille);
-  verif = verifSol(tab, systeme, taille);
-  printf("\n Verification = %d",verif);
-  if(verif==-1)
-  {
-    printf("\n Il n'y a pas de solution");
-  }
-  else
-  {
-    if(verif==0)
-    {
-      printf("\nLa solution est :");
-    }
-    else
-    {
-      printf("\n Il y a plusieurs solutions : ");
-    }
-    soustractionLigne(tab,taille,0,1,1);
-    echangeLigne(tab,taille,0,1);
-    printf("\nfinal");
-    afficheTab2D(tab,taille);
-    afficheSys(systeme, taille);
-  }*/
+  // verifSol(tab, systeme, taille); // Affiche combien de resultat possibles
 
-  for(i = 0; i< taille; i++){
+
+  cholesky(tab,matR,taille,systeme); // Decomposition de cholesky
+  resoudCho(matR,taille,systeme,0); // resoud Lx=b
+  transposeTri(matR,taille); // transpose L
+  // afficheTab2D(matR,taille);
+  resoudCho(matR,taille,systeme,1); //resoud Lt y=x
+  afficheSys(systeme,taille);
+
+  for(i = 0; i< taille; i++){ // libere la memoire
     free(tab[i]);
     free(matR[i]);
   }
 
   free(tab);
-  // free(systeme);
-  // free(resouSys);
+  free(systeme);
+  free(resouSys);
   return 0;
 }
 
@@ -557,7 +550,7 @@ void renverseSys(double* sys, int taille)
 
 
 
-int verifSol(double** tab, double* sys,int taille)
+void verifSol(double** tab, double* sys,int taille)
 {
   int i,j,verif,compte0;
   verif = 0;   // 0 = normal/ 1  = exprssion par d'autres/ -1 Pas possible
@@ -589,46 +582,101 @@ int verifSol(double** tab, double* sys,int taille)
     }
     i++;
   }
-  return verif;
+  if(verif==-1)
+  {
+    printf("\n Il n'y a pas de solution");
+  }
+  else
+  {
+    if(verif==0)
+    {
+      //printf("\nLa solution est :");
+    }
+    else
+    {
+      //printf("\n Il y a plusieurs solutions : ");
+    }
+    // soustractionLigne(tab,taille,0,1,1);
+    // echangeLigne(tab,taille,0,1);
+    //printf("\nfinal");
+    //afficheTab2D(tab,taille);
+    //afficheSys(systeme, taille);
+  }
 }
 
 
 void cholesky(double** tab,double** matR, int taille, double* sys) {
-  int somme = 0;
+  double somme = 0;
   matR[0][0] = sqrt(tab[0][0]);
   for(int i =1; i<taille; i++){
     for(int j = 0; j<taille; j++){
       somme = 0;
       if(i==j){
-        for(int k = 0; k<j; k++){
-          somme = somme + (matR[j][k]) * (matR[j][k]);
+        for(int k = 0; k<=j; k++){
+          somme = somme + (matR[i][k]) * (matR[i][k]);
         }
-        matR[j][j] = sqrt(tab[j][j] - somme);
+        matR[i][i] = sqrt(tab[i][i] - somme);
       }
       else if(j>i){
         matR[i][j] = 0;
       }
 
       else{
-        for(int k = 0; k<j; k++){
+        for(int k = 0; k<=j; k++){
           somme = somme + (matR[i][k]) * (matR[j][k]);
         }
         matR[i][j] = (1/matR[j][j]) * (tab[i][j] - somme);
       }
     }
   }
-  printf("\n matrice R\n");
-  afficheTab2D(matR,taille);
 
-  ////////////////////////////////////
-  ///////////RESOLUTION///////////////
-  ////////////////////////////////////
 
-  for(int i=0; i< taille; i++){
-    somme = 0;
-    for(int j=0; j<i ;j++){
-      somme = somme + matR[i][j] * sys[i];
-      sys[i] = (sys[i]- somme) / matR[i][i];
+}
+
+
+void resoudCho(double** matR,int taille, double* sys, int transpose){
+  double* x =NULL;
+  x =(double*) malloc(taille * sizeof(double));
+  int i,j;
+  double somme;
+  if(transpose==0)
+  {
+    for(i = 0; i< taille; i++)
+    {
+      somme =0;
+      for (j= taille-1; j>i; j--)
+      {
+        somme = somme + matR[i][j] * x[j];
+      }
+      x[i] = (sys[i]- somme) / matR[i][i];
+    }
+
+  }
+  else {
+    for(i=taille-1; i>=0; i--){
+      somme = 0;
+      for(j=taille-1; j>i ;j--){
+        somme = somme + matR[i][j] * x[j];
+      }
+      x[i] = (sys[i]- somme) / matR[i][i];
+    }
+  }
+
+  afficheSys(x,taille );
+
+  for(i=0; i<taille; i++){
+    sys[i] = x[i];
+  }
+  free(x);
+}
+
+void transposeTri(double** matR, int taille){
+  int i, j;
+
+  for(i = 0; i< taille ; i++){
+    for(j=0 ; j<i ; j++){
+      matR[j][i]= matR[i][j];
+      matR[i][j] =0;
     }
   }
 }

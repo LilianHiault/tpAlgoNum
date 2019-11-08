@@ -5,12 +5,14 @@
 \usepackage[english,french]{babel}
 \usepackage{textcomp}
 \usepackage{amsmath,amssymb}
+
 \makeatletter
 \renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
    \hskip -\arraycolsep
    \let\@ifnextchar\new@ifnextchar
    \array{#1}}
 \makeatother
+
 \usepackage{lmodern}
 \usepackage[a4paper]{geometry}
 \usepackage{graphicx}
@@ -83,8 +85,8 @@ On utilise ces matrices pour résoudre les sytèmes d'équations linéaires.
 \subsubsection{Algorithme de Gauss}
 
 Afin de résoudre les systèmes, on triangularise la matrice. Pour cela on clacule le pivot de Gauss à chaque itération en transformant la premier coefficient non-nul de la ligne par un $1$.
-Puis on soustrait autant de fois cette ligne aux suivantes pour abtenir un $0$ sur toute la colonne.
-On réitère cela jusqu'à obtenir une matrice triangulaire supérieure.
+Puis on utilise une suite d'opérations élémentaires sur les lignes suivantes (échange de 2 lignes, multiplication d'une ligne par un scalaire non nul et ajout du multiple d'une ligne à une autre) jusqu'à obtenir un $0$ sur toute la colonne.
+On réitère cela pour chaque colonne jusqu'à obtenir une matrice échelonnée.
 
 \subsubsection{Exemple}
 

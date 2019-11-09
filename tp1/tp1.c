@@ -53,7 +53,7 @@ void renverseTab2D(double** , int); // Expliqué dans le main
 
 void renverseSys(double*, int); // Expliqué dans le main
 
-int verifSol(double**, double*, int); // Expliqué dans le main
+void verifSol(double**, double*, int); // Expliqué dans le main
 
 // Pour Cholesky
 
@@ -85,40 +85,49 @@ int main()
     matR[i]  = (double*) malloc(taille * sizeof(double));
   }
 
-  int verif = 0;
-
   double* systeme = (double*) malloc(taille * sizeof(double));
   double* resouSys = (double*) malloc(taille * sizeof(double));
 
-  // creuse(tab, taille);
+  moler(tab, taille);
 
   afficheTab2D(tab, taille);
 
-  // Remplir matrice
+  Remplir matrice
   remplirTab(tab, taille);
   remplirSys(systeme, taille);
-  // afficheSys(systeme, taille);
+  afficheSys(systeme, taille);
 
-  // afficheTab2D(tab, taille);
+  afficheTab2D(tab, taille);
 
-  // gauss(tab,taille, systeme); // Triangulation avec le système
-  // printf("\nRenverse\n");
-  // renverseTab2D(tab,taille); // Pas transposée, pour inverser la position dans la ligne et dans la colonne
-  // renverseSys(systeme,taille); // Pareil pour le système
+  // GAUSS
+
+  // clock_t begin = clock();
+
+  gauss(tab,taille, systeme); // Triangulation avec le système
+  printf("\nRenverse\n");
+  renverseTab2D(tab,taille); // Pas transposée, pour inverser la position dans la ligne et dans la colonne
+  renverseSys(systeme,taille); // Pareil pour le système
 
   // Affiche la matrice
-  // afficheTab2D(tab, taille);
-  // afficheSys(systeme, taille);
+  afficheTab2D(tab, taille);
+  afficheSys(systeme, taille);
 
 
   // Résolution par la méthode de Gauss
-  // gauss(tab,taille, systeme); //Simplifie au maximum
-  // printf("\n Re-Renverse\n");
-  // renverseTab2D(tab,taille); // Remet dans le sens original
-  // renverseSys(systeme,taille); // Pareil
+  gauss(tab,taille, systeme); //Simplifie au maximum
+  printf("\n Re-Renverse\n");
+  renverseTab2D(tab,taille); // Remet dans le sens original
+  renverseSys(systeme,taille); // Pareil
 
-  // verifSol(tab, systeme, taille); // Affiche combien de resultat possibles
+  verifSol(tab, systeme, taille); // Affiche combien de resultat possibles
 
+  // clock_t end = clock();
+  // double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+  // printf("Temps d'éxecution Gauss : %lf\n", time_spent);
+
+  // CHOLESKY
+
+  clock_t begin = clock();
 
   cholesky(tab,matR,taille,systeme); // Decomposition de cholesky
   resoudCho(matR,taille,systeme,0); // resoud Lx=b
@@ -126,6 +135,11 @@ int main()
   // afficheTab2D(matR,taille);
   resoudCho(matR,taille,systeme,1); //resoud Lt y=x
   afficheSys(systeme,taille);
+
+  clock_t end = clock();
+  double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+  printf("Temps d'éxecution Cholesky : %lf\n", time_spent);
+
 
   for(i = 0; i< taille; i++){ // libere la memoire
     free(tab[i]);
@@ -620,7 +634,6 @@ void cholesky(double** tab,double** matR, int taille, double* sys) {
       else if(j>i){
         matR[i][j] = 0;
       }
-
       else{
         for(int k = 0; k<=j; k++){
           somme = somme + (matR[i][k]) * (matR[j][k]);
@@ -629,8 +642,6 @@ void cholesky(double** tab,double** matR, int taille, double* sys) {
       }
     }
   }
-
-
 }
 
 

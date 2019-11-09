@@ -13,6 +13,7 @@
    \array{#1}}
 \makeatother
 
+\usepackage{siunitx}
 \usepackage{lmodern}
 \usepackage[a4paper]{geometry}
 \usepackage{graphicx}
@@ -24,7 +25,7 @@
 \hypersetup{pdfstartview=XYZ}
 
 \title{Compte rendu : TP d'algorithmes numériques 1}
-\author{HIAULT Lilian, VALLET Baptiste}
+\author{HIAULT Lilian \and VALLET Baptiste}
 \date{08 novembre 2019}
 
 \begin{document}
@@ -41,7 +42,7 @@
 
 \section*{Introduction}
 
-À l'occasion des travaux pratiques d'algorithmes numériques HIAULT Lilian et VALLET Baptiste avons réalisé un programme en langage C qui permet de résoudre des systèmes linéaires grâce aux méthodes de Gauss et de Cholesky.
+À l'occasion des travaux pratiques d'algorithmes numériques Hiault Lilian et Vallet Baptiste avons réalisé un programme en langage C qui permet de résoudre des systèmes linéaires grâce aux méthodes de Gauss et de Cholesky.
 
 
 \section{Rappel des méthodes de résolution d'équations linéaires}
@@ -84,14 +85,21 @@ On utilise ces matrices pour résoudre les sytèmes d'équations linéaires.
 
 \subsubsection{Algorithme de Gauss}
 
-Afin de résoudre les systèmes, on triangularise la matrice. Pour cela on clacule le pivot de Gauss à chaque itération en transformant la premier coefficient non-nul de la ligne par un $1$.
-Puis on utilise une suite d'opérations élémentaires sur les lignes suivantes (échange de 2 lignes, multiplication d'une ligne par un scalaire non nul et ajout du multiple d'une ligne à une autre) jusqu'à obtenir un $0$ sur toute la colonne.
-On réitère cela pour chaque colonne jusqu'à obtenir une matrice échelonnée.
+La méthode de Gauss permet de calculer des solutions exactes d'un système d'équation en un nombre d'itérations fini.
+Afin de résoudre un système, on triangularise la matrice. Pour cela on calcule le pivot de Gauss à chaque itération en transformant la premier coefficient non-nul de la ligne par un $1$ grâce à des opérations élémentaires : échange de 2 lignes, multiplication d'une ligne par un scalaire non nul et ajout du multiple d'une ligne à une autre.
+Puis on utilise une suite d'opérations élémentaires sur les lignes suivantes jusqu'à obtenir un $0$ sur toute la colonne sous chaque $1$.
+On réitère cela pour chaque ligne jusqu'à obtenir une matrice échelonnée.
 
 \subsubsection{Exemple}
 
-La méthode de Gauss permet de calculer des solutions exactes d'un système d'équation en un nombre d'itération fini.
-À chaque étape on doit créer des $0$ en dessous de la diagonale d'un matrice $A$ jusqu'à obtenir une matrice $A'$ diagonale supérieure grâce à laquelle on pourra résoudre directement l'équation.
+
+À chaque étape on doit créer des $0$ en dessous de la diagonale d'une matrice $A$ jusqu'à obtenir une matrice $A'$ échelonnée grâce à laquelle on pourra résoudre directement l'équation.
+
+\[ A =
+ \begin{pmatrix}[cc|c]
+  2  & 1 & 5 \\
+  -1 & 3 & 1
+ \end{pmatrix}\]
 
 \[ A' =
  \begin{pmatrix}[cc|c]
@@ -118,47 +126,274 @@ On a donc :
 
 On ne peut appliquer la méthode de Cholesky uniquement sur des matrices symétriques et définies positives.
 La méthode de Cholesky permet de décomposer une matrice $A$ en deux matrices $R$ et $R^T$ tel que : $A = R^T R$
+avec $R$ une matrice triangulaire supérieure.
+
+On a alors \[R_{i, j} = \sqrt{a_{j, i} - \sum_{k=1}^{j-1} r^2_{j,k}}\]
 
 \subsubsection{Exemple}
 
-Exemple
+\[ A = R R^T\]
 
-\section{Présentation des programmes commentés}
+\[\begin{pmatrix}
+1 & 1 & 1  & 1 \cr
+1 & 5 & 5  & 5 \cr
+1 & 5 & 14 & 14 \cr
+1 & 5 & 14 & 15
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 & 0  & 0 \cr
+1 & 2 & 0  & 0 \cr
+1 & 2 & 3  & 0 \cr
+1 & 2 & 3  & 1
+\end{pmatrix}
+\begin{pmatrix}
+1 & 1 & 1  & 1 \cr
+0 & 2 & 2  & 2 \cr
+0 & 0 & 3  & 3 \cr
+0 & 0 & 0  & 1
+\end{pmatrix}\]
 
-\subsection{Programme de résolution par la méthode de Gauss}
+\section{Présentation des programmes}
+
+\subsection{Gauss}
 
 \begin{boxedverbatim}
- Programme Gauss
+void gauss(double** tab, int taille,double* sys){
+  int i, j, k, resteI; // i compte les lignes et j les colonnes
+  i = 0;
+  j = 0;
+  k = 0;
+  double pass = 0;
+  // Trigonalisation
+  while(j < taille){ // Changer de colonne
+    i = k;
+    resteI = 0;
+    while(tab[i][j] == 0  && i < taille - 1){ // Changer de ligne dans une colonne
+      i++;
+    }
+    if(tab[i][j] != 0){ // Si on trouve un pivot
+      sys[i]=sys[i]/tab[i][j];
+      diviseLigne(tab[i],taille,tab[i][j]);
+      resteI = i + 1;
+      while(resteI < taille){ // diviser chaque ligne
+        sys[resteI] =sys[resteI]- (tab[resteI][j]/tab[i][j]) * sys[i];
+        soustractionLigne(tab, taille, i, resteI, j);
+        resteI++;
+      }
+      if (i != k){ // met le pivot en haut mais pas trop pour échelonner
+        pass = sys[k];
+        sys[k] = sys[i];
+        sys[i] = pass ;
+        echangeLigne(tab, taille, i, k);
+      }
+      k++;
+    }
+    else{
+      //printf("Pas de pivot colonne %d\n", j+1);
+    }
+    j++;
+  }
+}
 \end{boxedverbatim}
+\\
+On résout un système du type $Ax=b$ où $tab$ est la matrice $A$ et $sys$ est la matrice colonne $b$.
 
-\subsection{Programme de résolution grâce à la méthode de Cholesky}
+
+On utilise la fonction Gauss() une première fois pour trigonaliser la matrice. Puis, on applique renverseTab() et renverseSys() pour pouvoir réutiliser la fonction Gauss() et ainsi réduire au maximum la matrice. On réemploie renverseTab() et renverseSys() pour remettre le système à l'endroit.
+verifSol() vérifie enfin le nombre de solutions du système, et affiche le système simplifié.
+
+
+\subsection{Cholesky}
 
 \begin{boxedverbatim}
- Programme de Cholesky
+void cholesky(double** tab,double** matR, int taille, double* sys) {
+  double somme = 0;
+  matR[0][0] = sqrt(tab[0][0]);
+  for(int i =1; i<taille; i++){
+    for(int j = 0; j<taille; j++){
+      somme = 0;
+      if(i==j){
+        for(int k = 0; k<=j; k++){
+          somme = somme + (matR[i][k]) * (matR[i][k]);
+        }
+        matR[i][i] = sqrt(tab[i][i] - somme);
+      }
+      else if(j>i){
+        matR[i][j] = 0;
+      }
+      else{
+        for(int k = 0; k<=j; k++){
+          somme = somme + (matR[i][k]) * (matR[j][k]);
+        }
+        matR[i][j] = (1/matR[j][j]) * (tab[i][j] - somme);
+      }
+    }
+  }
+}
 \end{boxedverbatim}
+\\
+Cette fonction trouve la matrice $R$ telle que $R R^T = A$. Elle applique les formules pour trouver les éléments de $R$ en fonction de $A$ et des éléments de $R$ définis au fur et à mesure.
+
+\subsection{Autres fonctions et main}
+
+\begin{verbatim}
+void remplirTab(double** tab, int taille)
+\end{verbatim}
+
+
+
+Pour chaque position de la matrice (qui est rappelée), l'utilisateur entre une valeur.
+\\
+\begin{verbatim}
+void afficheTab2D(double ** tab, int taille)
+\end{verbatim}
+
+
+
+Affiche une matrice carrée de taille "taille".
+\\
+\begin{verbatim}
+void remplirSys(double* tab,int taille)
+\end{verbatim}
+
+
+
+Comme remplirTab mais pour un tableau à une dimension.
+\\
+\begin{verbatim}
+void afficheSys(double* tab, int taille)
+\end{verbatim}
+
+
+
+Comme afficheTab2D mais pour un tableau à une dimension.
+\\
+\begin{verbatim}
+void echangeLigne(double** tab, int taille, int nouv, int anc)
+\end{verbatim}
+
+
+
+Échange une ligne avec une autre d'un même tableau à deux dimensions en échangeant chaque variable avec celle de la même colonne mais d'une autre ligne grâce la variable $echange$.
+\\
+\begin{verbatim}
+void diviseLigne(double* tab, int taille, double divi)
+\end{verbatim}
+
+
+
+Divise tous les membres d'une ligne par une valeur donnée.
+\\
+\begin{verbatim}
+void renverseTab2D(double** tab,int taille)
+\end{verbatim}
+
+
+Cette fonction ne donne pas la transposée d'une matrice, elle inverse la position dans la ligne et elle inverse la position dans la colonne : i prend taille-i-1 et j prend taille -1-j.
+Cette fonction permet de faire repasser la matrice dans gauss pour la réduire au maximum.
+\\
+\begin{verbatim}
+void renverseSys(double* sys, int taille)
+\end{verbatim}
+
+
+
+Inverse la position de chaque valeur.
+\\
+\begin{verbatim}
+void verifSol(double** tab, double* sys,int taille)
+\end{verbatim}
+
+
+
+Cette fonction vérifie si le système admet une, plusieurs ou aucune solution. Pour ce faire, tant qu'il n'est pas insoluble, elle compte le nombre de coefficients nuls, si il la ligne est constituée exclusivement de zéros, alors on vérifie le résultat, si il est non nul, le système n'admet aucune solution, sinon, il y a une solution supplémentaire on passe à la prochaine ligne. Si il y a exactement un zéro, le nombre de solutions reste le même.
+\\
+\begin{verbatim}
+void transposeTri(double** matR, int taille)
+\end{verbatim}
+
+
+
+C'est une fonction qui calcule la transposée d'une matrice triangulaire inférieure. Elle parcourt toute la matrice, les valeurs sont mises à leur place transposée puis annulées pour que le résultat soit une matrice triangulaire supérieure.
+\\
+\begin{verbatim}
+void resoudCho(double** matR,int taille, double* sys, int transpose)
+\end{verbatim}
+
+
+
+Cette fonction résoud le système d'équation, si transposée = 0 alors la matrice entrée est L sinon c'est Lt.De plus elle crée un tableau x qui prend les nouvelles valeurs des résultats des lignes. La fonction résoud le système similairement à gauss, de haut en bas pour L et inversement pour Lt. Puis le tableau des résultats prend toutes ses nouvelles valeurs.
+
+
+\begin{verbatim}
+int main()
+\end{verbatim}
+
+
+Création des tableaux dynamiquement par taille définie par l'utilisateur
+Utilisation de remplirTab et de remplirSys pour constituer le système à la main.
+
+-Gauss :
+Utilisation de la fonction gauss une première fois pour trigonaliser la matrice puis renverseTab et renverseSys pour pouvoir réutiliser la fonction gauss et ainsi réduire au maximum la matrice, puis on réemploie renverseTab et renverseSys pour remettre le système à l'endroit.
+verifSol vérifie le nombre de solutions du système, et affiche le système simplifié.
+
+
+-Cholesky :
+Utilisation de la fonction cholesky sur le système pour obtenir L, à partir duquel resoudCho détermine le y de L.y = b. Puis transposeTri détermine Lt, resoudCho calcule le système final.
+
+
 
 \section{Jeux d'essais}
 
-Présentation de jeux d'essais pertinents et justifiés
+\subsection{Résultats}
 
-Jeux d'essais : matrices tests
 
-\section{Commentaire des jeux d'essais}
+Les matrices utilisées sont symétriques définies positives, elles peuvent donc êtres résolues par la méthode de Cholesky.
 
-Commentaire des jeux d'essais à partir de données relatives.
-Pourcentage d'écart, calcul de fonction d'erreurs, vitesse de convergence, complexité pratique, ...
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Taille de la matrice & Hilbert1 & Hilbert2 & Lehmer & Moler\\
+\hline
+10 & \num{5.6e-4} & \num{5.5e-4} & \num{5.1e-4} & \num{4.0e-4}\\
+100 & \num{2.9e-2} & \num{2.9e-2} & \num{2.4e-2} & \num{2.4e-2}\\
+1000 & \num{1.2e1} & \num{1.3e1} & \num{1.2e1} & \num{1.2e1}\\
+\hline
+\end{tabular}
+\caption{Tableau représentant la vitesse d'exécution en secondes de la méthode de Gauss en fonction de la taille de la matrice}
+\end{table}
+
+
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Taille de la matrice & Hilbert1 & Hilbert2 & Lehmer & Moler\\
+\hline
+10 & \num{2.0e-4} & \num{1.9e-4} & \num{1.9e-4} & \num{2.0e-4}\\
+100 & \num{3.4e-3} & \num{2.9e-3} & \num{3.3e-3} & \num{3.0e-3}\\
+1000 & \num{2.0e0} & \num{2.0e0} & \num{2.1e0} & \num{2.1e0}\\
+\hline
+\end{tabular}
+\caption{Tableau représentant la vitesse d'exécution en secondes de la méthode de Cholesky en fonction de la taille de la matrice}
+\end{table}
+
+
+\subsection{Commentaire des jeux d'essais}
+
+Pour une matrice de taille 10, la méthode de Cholesky est $2.5$ fois plus rapide que celle de Gauss (\num{2.0e-4}s contre \num{5.1e-4}s).
+
+
+Pour une matrice de taille 100, la méthode de Cholesky est $8.4$ fois plus rapide que celle de Gauss (\num{3.15e-3}s contre \num{2.65e-2}s).
+
+
+Pour une matrice de taille 1000, la méthode de Cholesky est $10$ fois plus rapide que celle de Gauss (\num{2.1e0}s contre \num{2.2e1}s).
+
 
 \section{Conclusion générale sur les méthodes}
 
-Comparaison, cadre d'utilisation, stabilité, ...
+La méthode de résolution d'équations linéaires de Cholesky est beaucoup plus rapide que celle de Gauss et plus la taille des équations à résoudre augmente, plus elle l'est.
 
-Peut-on retrouver une solution connue à priori ?
-
-Stabilité : le résultat est-il modifié par des calculs dégradés (erreurs accumulées...)
-
-Conditionnement : quel est l'effet de perturbations des données ?
-
-Evaluation des coûts en place et en temps.
-
+Il semble donc plus intéressant d'utiliser la méthode de Cholesky. Toutefois, celle-ci ne fonctionne que sur des matrices symétriques définies positive alors que la méthode de Gauss fonctionne sur toutes les matrices. La méthode de Gauss est donc moins rapide mais plus générale : on peut toujours l'utiliser.
 
 \end{document}

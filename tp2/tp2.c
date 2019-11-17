@@ -1,35 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "usuelles.h"
+#include "tab2d.h"
+#include "genmat.h"
+
+
 // reste à faire Tx+C et itérer
 
 // Fonctions
-
-// Fonctions usuelles
-int min(int, int);
-
-void remplirTab(double**, int);
-
-void afficheTab2D(double ** , int );
-
-// Générateurs de matrices
-void bord(double**, int);
-
-void dingDong(double**, int);
-
-void franc(double**, int);
-
-void hilbert1(double**, int);
-
-void hilbert2(double**, int);
-
-void kms(double**, int);
-
-void lehmer(double**, int);
-
-void lotkin(double**, int);
-
-void moler(double**, int);
 
 //TP1
 
@@ -78,7 +57,7 @@ void matDR(double** tab, double** diag, double** matR , int taille)
 
 double** prodMat(double** matG,double** matD, int taille)
 {
-  
+
   double** matRes = (double**) malloc(taille * sizeof(double*));
   int i,j,k;
   for(i=0; i<taille ;i++)
@@ -98,7 +77,7 @@ double** prodMat(double** matG,double** matD, int taille)
 }
 double* prodSys(double** matG,double* sysB, int taille)
 {
-  
+
   double* matRes = (double*) malloc(taille * sizeof(double));
   int i,k;
   for(i=0; i<taille ;i++)
@@ -160,9 +139,9 @@ int main()
   double* resouSys = (double*) malloc(taille * sizeof(double));
   resouSys = remplirX0(resouSys,taille);
 
-  
 
-  
+
+
 
   // Remplir matrice
   remplirTab(tab, taille);
@@ -194,151 +173,6 @@ int main()
 
 
 // Fonctions
-
-// Fonctions usuelles
-
-
-int min(int a, int b)
-{
-  int valMin = a;
-  if (b < a)
-  {
-    valMin = b;
-  }
-  return valMin;
-}
-
-void remplirTab(double** tab, int taille)
-// Remplit une matrice
-{
-  int i,j;
-  double valeur = 0;
-  for(i = 0; i < taille; i++)
-  {
-    // printf("i%d",i);
-    for(j = 0; j < taille; j++)
-    {
-      //printf("j%d",j);
-      printf("Valeur de [%d, %d] : ", i + 1, j + 1);
-      scanf("%lf", &valeur);
-      tab[i][j] = valeur;
-    }
-  }
-}
-
-void afficheTab2D(double ** tab, int taille)
-{
-  int i,j;
-  for(i = 0; i < taille; i++)
-  {
-    printf("\n");
-    for(j = 0; j < taille; j++)
-    {
-      printf("%lf ", tab[i][j]);
-    }
-    printf("\n");
-  }
-  printf("\n");
-}
-
-// Générateurs de matrices
-
-void bord(double** tab, int n)
-// Crée une matrice Bord
-{
-  int i, j; // i lignes et j colonnes
-  // n est la taille
-  for(i = 0; i < n; i++)
-  {
-    for(j = 0; j < n; j++)
-    {
-      if(i == j)
-      {
-        tab[i][j] = 1;
-      }
-      else if((i == 0) || (j == 0) || (i == n - 1) || (j == n - 1))
-      {
-        tab[i][j] = pow(2, (i+1) - (j + 1));
-      }
-      else
-      {
-        tab[i][j] = 0;
-      }
-    }
-  }
-}
-
-void dingDong(double** tab, int n)
-// Crée une matrice Ding Dong
-{
-  int i, j; // i lignes et j colonnes
-  // n est la taille
-  for(i = 0; i < n; i++)
-  {
-    for(j = 0; j < n; j++)
-    {
-      tab[i][j] = 1 / (2 * (n - (i + 1) - (j + 1) + 1.5));
-    }
-  }
-}
-
-void franc(double** tab, int n)
-// Crée une matrice Franc
-{
-  int i, j; // i lignes et j colonnes
-  // n est la taille
-  for(i = 0; i < n; i++)
-  {
-    for(j = 0; j < n; j++)
-    {
-      if(i >= j + 2)
-      {
-        tab[i][j] = 0;
-      }
-      else
-      {
-        tab[i][j] = min((i + 1), (j + 1));
-      }
-    }
-  }
-}
-
-void hilbert1(double** tab, int n)
-// Crée une matrice Hilbert
-{
-  int i, j; // i lignes et j colonnes
-  // n est la taille
-  for(i = 0; i < n; i++)
-  {
-    for(j = 0; j < n; j++)
-    {
-      tab[i][j] = 1 / (i + j + 1.0);
-    }
-  }
-}
-
-void hilbert2(double** tab, int n)
-// Crée une matrice Hilbert
-{
-  int i, j; // i lignes et j colonnes
-  // n est la taille
-  for(i = 0; i < n; i++)
-  {
-    for(j = 0; j < n; j++)
-    {
-      tab[i][j] = 1 / (i + j + 3.0);
-    }
-  }
-}
-
-void kms(double** tab, int n);
-
-void lehmer(double** tab, int n);
-
-void lotkin(double** tab, int n);
-
-void moler(double** tab, int n);
-
 
 // Fonctions Gauss
 

@@ -30,89 +30,17 @@ void gauss(double**, int, double*);
 //TP2
 
 //Jacobi
-void matDR(double** tab, double** diag, double** matR , int taille)
-{
-  int i,j;
-  for(i=0; i< taille ; i++)
-    {
-      for(j=0; j< taille; j++)
-	{
-	  if(i==j)
-	    {
-	      diag[i][j] = 1/tab[i][j];
-	      matR[i][j] = 0;
-	    }
-	  else
-	    {
-	      diag[i][j] = 0;
-	      matR[i][j] = tab[i][j];
-	    }
-	}
-    }
-  printf("\nD = ");
-  afficheTab2D(diag,taille);
-  printf("\nR = ");
-  afficheTab2D(matR,taille);
-}
+void matDR(double**, double**, double** , int);
 
-double** prodMat(double** matG,double** matD, int taille)
-{
+double** prodMat(double**,double**, int);
 
-  double** matRes = (double**) malloc(taille * sizeof(double*));
-  int i,j,k;
-  for(i=0; i<taille ;i++)
-    {
-    matRes[i]  = (double*) malloc(taille * sizeof(double));
-      for(j=0 ; j<taille ; j++)
-	{
-	  for(k=0; k<taille ; k++)
-	    {
-	      matRes[i][j] = matRes[i][j] + matG[i][k] * matD[k][j];
-	    }
-	}
-    }
-  printf("\nT = ");
-  afficheTab2D(matRes,taille);
-  return matRes;
-}
-double* prodSys(double** matG,double* sysB, int taille)
-{
+double* prodSys(double**, double*, int);
 
-  double* matRes = (double*) malloc(taille * sizeof(double));
-  int i,k;
-  for(i=0; i<taille ;i++)
-    {
-	  for(k=0; k<taille ; k++)
-	    {
-	      matRes[i] = matRes[i] + matG[i][k] * sysB[k];
-	      // printf("matRes[%d] = %lf",i,matRes[i]);
-	    }
-    }
-  printf("\nC = ");
-  afficheSys(matRes,taille);
-  return matRes;
-}
+void remplirX0(double*, int);
 
-void remplirX0(double* x,int taille)
-{
-  int i = 0;
-  for(i=0; i<taille ; i++)
-    {
-      x[i] = 1;
-    }
-  printf("\nX = \n");
-  afficheSys(x,taille);
-}
+void sommeSys(double*, double*, int);
 
-
-void sommeSys(double* matA, double* matB, int taille)
-{
-  int i =0;
-  for(i=0; i<taille; i++)
-    {
-      matA[i] = matA[i]+matB[i];
-    }
-}
+// Gauss-Seidel
 
 // Main
 
@@ -338,4 +266,92 @@ void gauss(double** tab, int taille,double* sys)
     }
     j--;
   }
+}
+
+
+// Jacobi
+
+void matDR(double** tab, double** diag, double** matR , int taille)
+{
+  int i,j;
+  for(i=0; i< taille ; i++)
+    {
+      for(j=0; j< taille; j++)
+	{
+	  if(i==j)
+	    {
+	      diag[i][j] = 1/tab[i][j];
+	      matR[i][j] = 0;
+	    }
+	  else
+	    {
+	      diag[i][j] = 0;
+	      matR[i][j] = tab[i][j];
+	    }
+	}
+    }
+  printf("\nD = ");
+  afficheTab2D(diag,taille);
+  printf("\nR = ");
+  afficheTab2D(matR,taille);
+}
+
+double** prodMat(double** matG,double** matD, int taille)
+{
+
+  double** matRes = (double**) malloc(taille * sizeof(double*));
+  int i,j,k;
+  for(i=0; i<taille ;i++)
+    {
+    matRes[i]  = (double*) malloc(taille * sizeof(double));
+      for(j=0 ; j<taille ; j++)
+	{
+	  for(k=0; k<taille ; k++)
+	    {
+	      matRes[i][j] = matRes[i][j] + matG[i][k] * matD[k][j];
+	    }
+	}
+    }
+  printf("\nT = ");
+  afficheTab2D(matRes,taille);
+  return matRes;
+}
+
+double* prodSys(double** matG,double* sysB, int taille)
+{
+
+  double* matRes = (double*) malloc(taille * sizeof(double));
+  int i,k;
+  for(i=0; i<taille ;i++)
+    {
+	  for(k=0; k<taille ; k++)
+	    {
+	      matRes[i] = matRes[i] + matG[i][k] * sysB[k];
+	      // printf("matRes[%d] = %lf",i,matRes[i]);
+	    }
+    }
+  printf("\nC = ");
+  afficheSys(matRes,taille);
+  return matRes;
+}
+
+
+void remplirX0(double* x,int taille)
+{
+  int i = 0;
+  for(i=0; i<taille ; i++)
+    {
+      x[i] = 1;
+    }
+  printf("\nX = \n");
+  afficheSys(x,taille);
+}
+
+void sommeSys(double* matA, double* matB, int taille)
+{
+  int i =0;
+  for(i=0; i<taille; i++)
+    {
+      matA[i] = matA[i]+matB[i];
+    }
 }

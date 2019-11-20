@@ -372,7 +372,7 @@ void gaussSeidel(double** mat, double* sys, int taille){
       sigma = 0;
       for(j = 0; j < taille; j++){
         if(j != i){
-          sigma = sigma + mat[i][j] * resultat; // /!\ Multiplication de matrice
+          sigma = sigma + mat[i][j] * resultat[j]; // 
         }
       }
       resultat = 1/tab[i][i](sys[i] - sigma);

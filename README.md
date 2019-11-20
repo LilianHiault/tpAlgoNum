@@ -4,15 +4,19 @@ Travaux pratiques d'algorithmes numériques en langage C (L2 info, Université C
 
 Adresse dépôt GitHub : `git@github.com:LilianHiault/tpAlgoNum.git`
 
-Options de compilation : `gcc tp1.c -Wall -Wextra -lm -g -o tp1`
+Adresse dépôt GitLab (ISIMA) : `git@gitlab.isima.fr:lihiault/tpAlgoNum.git`
+
+Options de compilation : `gcc tpX.c -Wall -Wextra -lm -g -o tpX`
 
 ## TP1
 
--   [x] Le TP1 propose un programme permettant de résoudre des systèmes linéaires grâce aux méthodes de Gauss et de Cholesky.
--   [x] Génération de matrices permettant de le tester.
--   [ ] Compte-rendu en LaTeX et PDF.
+-   [x] Résolution des systèmes d'équations linéaires grâce à la méthode de Gauss
+-   [x] Méthode de Cholesky
+-   [x] Génération de matrices test tester
+-   [x] Compte-rendu en LaTeX et PDF
 
 ## TP2
 
--   [ ] Implémentation des méthodes de Jacobi et Gauss Seidel pour la résolution de systèmes linéaires.
+-   [ ] Implémentation de la méthode de Jacobi
+-   [ ] Méthode de Gauss-Seidel pour la résolution de systèmes linéaires.
 -   [ ] Compte rendu en LaTeX et PDF.

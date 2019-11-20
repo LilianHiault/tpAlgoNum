@@ -42,6 +42,9 @@ void sommeSys(double*, double*, int);
 
 // Gauss-Seidel
 
+void gaussSeidel(double**, double*, int);
+
+
 // Main
 
 int main()
@@ -275,21 +278,21 @@ void matDR(double** tab, double** diag, double** matR , int taille)
 {
   int i,j;
   for(i=0; i< taille ; i++)
+  {
+    for(j=0; j< taille; j++)
     {
-      for(j=0; j< taille; j++)
-	{
-	  if(i==j)
-	    {
-	      diag[i][j] = 1/tab[i][j];
-	      matR[i][j] = 0;
-	    }
-	  else
-	    {
-	      diag[i][j] = 0;
-	      matR[i][j] = tab[i][j];
-	    }
-	}
+      if(i==j)
+      {
+        diag[i][j] = 1/tab[i][j];
+        matR[i][j] = 0;
+      }
+      else
+      {
+        diag[i][j] = 0;
+        matR[i][j] = tab[i][j];
+      }
     }
+  }
   printf("\nD = ");
   afficheTab2D(diag,taille);
   printf("\nR = ");
@@ -302,16 +305,16 @@ double** prodMat(double** matG,double** matD, int taille)
   double** matRes = (double**) malloc(taille * sizeof(double*));
   int i,j,k;
   for(i=0; i<taille ;i++)
-    {
+  {
     matRes[i]  = (double*) malloc(taille * sizeof(double));
-      for(j=0 ; j<taille ; j++)
-	{
-	  for(k=0; k<taille ; k++)
-	    {
-	      matRes[i][j] = matRes[i][j] + matG[i][k] * matD[k][j];
-	    }
-	}
+    for(j=0 ; j<taille ; j++)
+    {
+      for(k=0; k<taille ; k++)
+      {
+        matRes[i][j] = matRes[i][j] + matG[i][k] * matD[k][j];
+      }
     }
+  }
   printf("\nT = ");
   afficheTab2D(matRes,taille);
   return matRes;
@@ -323,13 +326,13 @@ double* prodSys(double** matG,double* sysB, int taille)
   double* matRes = (double*) malloc(taille * sizeof(double));
   int i,k;
   for(i=0; i<taille ;i++)
+  {
+    for(k=0; k<taille ; k++)
     {
-	  for(k=0; k<taille ; k++)
-	    {
-	      matRes[i] = matRes[i] + matG[i][k] * sysB[k];
-	      // printf("matRes[%d] = %lf",i,matRes[i]);
-	    }
+      matRes[i] = matRes[i] + matG[i][k] * sysB[k];
+      // printf("matRes[%d] = %lf",i,matRes[i]);
     }
+  }
   printf("\nC = ");
   afficheSys(matRes,taille);
   return matRes;
@@ -340,9 +343,9 @@ void remplirX0(double* x,int taille)
 {
   int i = 0;
   for(i=0; i<taille ; i++)
-    {
-      x[i] = 1;
-    }
+  {
+    x[i] = 1;
+  }
   printf("\nX = \n");
   afficheSys(x,taille);
 }
@@ -351,7 +354,28 @@ void sommeSys(double* matA, double* matB, int taille)
 {
   int i =0;
   for(i=0; i<taille; i++)
-    {
-      matA[i] = matA[i]+matB[i];
-    }
+  {
+    matA[i] = matA[i]+matB[i];
+  }
 }
+
+// Gauss-Seidel
+
+void gaussSeidel(double** mat, double* sys, int taille){
+  int i = 0;
+  int j = 0;
+  double* resultat = malloc(taille*sizeof(double)); // choix initial de solution
+  int sigma = 0;
+  while(1){
+    // Jusqu'à la convergence
+    for(i = 0; i < taille; i++){
+      sigma = 0;
+      for(j = 0; j < taille; j++){
+        if(j != i){
+          sigma = sigma + mat[i][j] * resultat; // /!\ Multiplication de matrice
+        }
+      }
+      resultat = 1/tab[i][i](sys[i] - sigma);
+      // Convergence atteinte ?
+    }
+  }

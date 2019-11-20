@@ -466,7 +466,7 @@ void soustractionLigne(double** tab, int taille, int pivot,int sous, int col)
   }
 }
 
-void gauss(double** tab, int taille,double* sys)
+void gauss(double** tab, int taille, double* sys)
 {
   int i, j, k, resteI;
   i = 0;
